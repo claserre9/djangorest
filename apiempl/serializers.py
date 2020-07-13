@@ -9,7 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = models.User
         fields = (
             'id', 'first_name', 'last_name', 'email', 'password', 'birthday', 'phone', 'country', 'city', 'profession',
-            'is_licenced')
+            'is_licenced', 'date_joined')
         extra_kwargs = {
             'password': {
                 'write_only': True,
@@ -20,10 +20,15 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         '''Create a new user'''
         user = models.User.objects.create_user(
-            email=validated_data['email'],
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
-            password=validated_data['password']
+            email=validated_data['email'],
+            password=validated_data['password'],
+            birthday=validated_data['birthday'],
+            phone=validated_data['phone'],
+            country=validated_data['country'],
+            city=validated_data['city'],
+            profession=validated_data['profession'],
+            is_licenced=validated_data['is_licenced'],
         )
-
         return user

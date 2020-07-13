@@ -1,19 +1,22 @@
+import datetime
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
+from django.utils import timezone
 
 
 class UserProfileManager(BaseUserManager):
     """User Management"""
 
-    def create_user(self, email, first_name, last_name, password=None):
+    def create_user(self, email, first_name, last_name, password=None, **extra_fields):
         """Creates a new user"""
         if not email:
             raise ValueError('User email is mandatory')
 
         email = self.normalize_email(email)
-        user = self.model(email=email, first_name=first_name, last_name=last_name)
+        user = self.model(email=email, first_name=first_name, last_name=last_name, **extra_fields)
         user.set_password(password)
         user.save(using=self.db)
 
@@ -29,16 +32,15 @@ class UserProfileManager(BaseUserManager):
         return user
 
 
-
 class User(AbstractBaseUser, PermissionsMixin):
     """Database model for employee"""
     first_name = models.CharField(blank=True, max_length=255)
     last_name = models.CharField(blank=True, max_length=255)
     email = models.EmailField(max_length=255, unique=True)
-    birthday = models.DateTimeField(null=True, blank=True)
-    phone = models.CharField(blank=True, max_length=12)
-    country = models.CharField(blank=True, max_length=255)
-    city = models.CharField(blank=True, max_length=255)
+    birthday = models.DateField(default=datetime.date.today)
+    phone = models.CharField(max_length=12)
+    country = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
     profession = models.CharField(blank=True, max_length=255)
     is_licenced = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)

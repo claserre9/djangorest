@@ -5,7 +5,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import BaseUserManager
-from django.utils import timezone
+from rest_framework import serializers
 
 
 class UserProfileManager(BaseUserManager):
@@ -69,15 +69,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.first_name + ' ' + self.last_name + ' (' + self.email + ')'
 
 
-# class UserComment():
-#     user = models.ForeignKey(
-#         settings.AUTH_USER_MODEL,
-#         on_delete=models.CASCADE
-#     )
-#     content =  models.TextField()
-#     created = models.DateTimeField(auto_now=False, auto_now_add=True)
-#     modified = models.DateTimeField(auto_now=True, auto_now_add=False)
-
 class UserForumPost(models.Model):
     """Database model for a post in a forum"""
     user = models.ForeignKey(
@@ -87,11 +78,26 @@ class UserForumPost(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
     category = models.CharField(blank=True, max_length=255)
-    comment = models.TextField()
     created = models.DateTimeField(auto_now=False, auto_now_add=True)
     modified = models.DateTimeField(auto_now=True, auto_now_add=False)
+
+    class Meta:
+        ordering = ['-created']
+
 
     def __str__(self):
         """Forum Post as string"""
         return self.title
 
+
+class UserComment(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    post = models.ForeignKey(UserForumPost, on_delete=models.CASCADE, related_name='comments')
+    content = models.TextField()
+
+
+    def __str__(self):
+        return 'Comment by {}'.format(self.user_id)

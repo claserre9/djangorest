@@ -19,3 +19,13 @@ class UserViewSet(viewsets.ModelViewSet):
 class UserLoginAPIViews(ObtainAuthToken):
     """Create user authentication token"""
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+
+class UserForumPostViewSet(viewsets.ModelViewSet):
+    """All api action on user forum posts"""
+    authentication_classes = (TokenAuthentication,)
+    serializer_class = serializers.UserForumPostSerializer
+    queryset = models.UserForumPost.objects.all()
+
+    def perform_create(self, serializer):
+        """Set user when logged"""
+        serializer.save(user=self.request.user)

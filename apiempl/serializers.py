@@ -32,3 +32,12 @@ class UserSerializer(serializers.ModelSerializer):
             is_licenced=validated_data['is_licenced'],
         )
         return user
+
+
+class UserForumPostSerializer(serializers.ModelSerializer):
+    """Serialize a user forum post"""
+
+    class Meta:
+        model = models.UserForumPost
+        fields = ('id', 'user', 'title', 'content', 'category', 'comment', 'created', 'modified')
+        extra_kwargs = {'user': {'read_only': True}}

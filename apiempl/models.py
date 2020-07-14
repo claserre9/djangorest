@@ -1,5 +1,6 @@
 import datetime
 
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
@@ -66,3 +67,31 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.first_name + ' ' + self.last_name + ' (' + self.email + ')'
+
+
+# class UserComment():
+#     user = models.ForeignKey(
+#         settings.AUTH_USER_MODEL,
+#         on_delete=models.CASCADE
+#     )
+#     content =  models.TextField()
+#     created = models.DateTimeField(auto_now=False, auto_now_add=True)
+#     modified = models.DateTimeField(auto_now=True, auto_now_add=False)
+
+class UserForumPost(models.Model):
+    """Database model for a post in a forum"""
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    category = models.CharField(blank=True, max_length=255)
+    comment = models.TextField()
+    created = models.DateTimeField(auto_now=False, auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True, auto_now_add=False)
+
+    def __str__(self):
+        """Forum Post as string"""
+        return self.title
+

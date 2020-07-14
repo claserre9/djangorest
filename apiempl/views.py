@@ -4,6 +4,7 @@ from apiempl import models, serializers, permissions
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -25,7 +26,16 @@ class UserForumPostViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     serializer_class = serializers.UserForumPostSerializer
     queryset = models.UserForumPost.objects.all()
+    permission_classes = (
+        permissions.UpdateOwnPost,
+        IsAuthenticatedOrReadOnly
+    )
 
     def perform_create(self, serializer):
         """Set user when logged"""
         serializer.save(user=self.request.user)
+
+
+class UserCommentViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.UserCommentSerializer
+    queryset = models.UserComment.objects.all()

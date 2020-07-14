@@ -33,11 +33,17 @@ class UserSerializer(serializers.ModelSerializer):
         )
         return user
 
+class UserCommentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.UserComment
+        fields = '__all__'
 
 class UserForumPostSerializer(serializers.ModelSerializer):
     """Serialize a user forum post"""
+    comments = UserCommentSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.UserForumPost
-        fields = ('id', 'user', 'title', 'content', 'category', 'comment', 'created', 'modified')
+        fields = ('id', 'user', 'title', 'content', 'comments' ,'category', 'created', 'modified')
         extra_kwargs = {'user': {'read_only': True}}
